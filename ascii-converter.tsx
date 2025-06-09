@@ -914,7 +914,7 @@ export default function AsciiConverter() {
     const element = document.createElement("a")
     const file = new Blob([asciiArt], { type: "text/plain" })
     element.href = URL.createObjectURL(file)
-    element.download = "ascii-art.txt"
+    element.download = "ascii-yzy.vercel.app.txt"
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
@@ -959,7 +959,7 @@ export default function AsciiConverter() {
     const element = document.createElement("a")
     const file = new Blob([html], { type: "text/html" })
     element.href = URL.createObjectURL(file)
-    element.download = "ascii-art.html"
+    element.download = "ascii-yzy.vercel.app.html"
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
@@ -989,7 +989,7 @@ export default function AsciiConverter() {
     const element = document.createElement("a")
     const file = new Blob([svg], { type: "image/svg+xml" })
     element.href = URL.createObjectURL(file)
-    element.download = "ascii-art.svg"
+    element.download = "ascii-yzy.vercel.app.svg"
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
@@ -1002,7 +1002,7 @@ export default function AsciiConverter() {
       if (blob) {
         const element = document.createElement("a")
         element.href = URL.createObjectURL(blob)
-        element.download = "ascii-art.png"
+        element.download = "ascii-yzy.vercel.app.png"
         document.body.appendChild(element)
         element.click()
         document.body.removeChild(element)
