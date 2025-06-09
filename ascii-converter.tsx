@@ -181,10 +181,10 @@ export default function AsciiConverter() {
   const [watermarkPosition, setWatermarkPosition] = useState({ x: 90, y: 95 })
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.5)
 
-  const [resolution, setResolution] = useState(0.11)
+  const [resolution, setResolution] = useState(0.30)
   const [inverted, setInverted] = useState(false)
   const [grayscale, setGrayscale] = useState(false)
-  const [charSet, setCharSet] = useState("standard")
+  const [charSet, setCharSet] = useState("detailed")
   const [loading, setLoading] = useState(true)
   const [imageLoaded, setImageLoaded] = useState(false)
   const [asciiArt, setAsciiArt] = useState<string>("")
@@ -242,12 +242,14 @@ export default function AsciiConverter() {
       document.documentElement.style.setProperty("--theme-accent", theme.accent)
       document.documentElement.style.backgroundColor = theme.background
       document.body.style.backgroundColor = theme.background
+      document.body.style.zoom = "0.9"
     }
 
     return () => {
       if (typeof document !== "undefined") {
         document.documentElement.style.backgroundColor = ""
         document.body.style.backgroundColor = ""
+        document.body.style.zoom = ""
       }
     }
   }, [currentTheme])
@@ -852,7 +854,7 @@ export default function AsciiConverter() {
   }
 
   const resetAllSettings = () => {
-    setResolution(0.11)
+    setResolution(0.30)
     setInverted(false)
     setGrayscale(false)
     setCharSet("standard")
@@ -1148,7 +1150,7 @@ export default function AsciiConverter() {
                   </div>
 
                   <p className="text-xs mb-3 leading-relaxed" style={{ color: themes[currentTheme].secondary }}>
-                    Check my portfolio!
+                    how are u????
                   </p>
 
                   <Button
