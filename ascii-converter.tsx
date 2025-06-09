@@ -32,6 +32,7 @@ import {
   X,
 } from "lucide-react"
 
+// Define types
 type ColoredChar = {
   char: string
   color: string
@@ -72,6 +73,20 @@ const themes: Record<string, Theme> = {
     primary: "#ffffff",
     secondary: "#888888",
     accent: "#666666",
+  },
+  dark: {
+    name: "Dark",
+    background: "#0a0a0a",
+    primary: "#ffffff",
+    secondary: "#a0a0a0",
+    accent: "#333333",
+  },
+  white: {
+    name: "White",
+    background: "#ffffff",
+    primary: "#000000",
+    secondary: "#666666",
+    accent: "#cccccc",
   },
   matrix: {
     name: "Matrix",
@@ -164,6 +179,9 @@ export default function AsciiConverter() {
   const [textOverlay, setTextOverlay] = useState("")
   const [overlayPosition, setOverlayPosition] = useState({ x: 50, y: 50 })
   const [showPortfolioPopup, setShowPortfolioPopup] = useState(false)
+  const [watermark, setWatermark] = useState("")
+  const [watermarkPosition, setWatermarkPosition] = useState({ x: 90, y: 95 })
+  const [watermarkOpacity, setWatermarkOpacity] = useState(0.5)
 
   // Core state
   const [resolution, setResolution] = useState(0.11)
@@ -212,7 +230,6 @@ export default function AsciiConverter() {
     custom: " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$",
   }
 
-  // Show portfolio popup after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPortfolioPopup(true)
@@ -357,6 +374,7 @@ export default function AsciiConverter() {
       setImageLoaded(true)
       setLoading(false)
 
+      // Trigger conversion after a small delay to ensure everything is ready
       setTimeout(() => {
         convertToAscii()
       }, 50)
@@ -367,7 +385,7 @@ export default function AsciiConverter() {
       setLoading(false)
     }
 
-    img.src = "/images/ascii.png"
+    img.src = "/images/original-image.png"
   }
 
   const loadImage = (src: string) => {
@@ -389,6 +407,7 @@ export default function AsciiConverter() {
       setImageLoaded(true)
       setLoading(false)
 
+      // Trigger conversion after a small delay to ensure everything is ready
       setTimeout(() => {
         convertToAscii()
       }, 50)
@@ -649,10 +668,10 @@ export default function AsciiConverter() {
     ctx.font = `${fontSize}px monospace`
     ctx.textBaseline = "top"
 
-    // Use theme for ASCII background and text when switch is ON
+    // Use theme for ASCII background and text
     const theme = themes[currentTheme]
-    const asciiBackground = "#000000"
-    const asciiPrimary = "#ffffff"
+    const asciiBackground = theme.background
+    const asciiPrimary = theme.primary
 
     ctx.fillStyle = asciiBackground
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -674,7 +693,7 @@ export default function AsciiConverter() {
     // Add text overlay
     if (textOverlay) {
       ctx.font = `${fontSize * 2}px monospace`
-      const overlayColor = "#666666"
+      const overlayColor = theme.secondary
       ctx.fillStyle = overlayColor
       ctx.strokeStyle = asciiBackground
       ctx.lineWidth = 2
@@ -683,13 +702,40 @@ export default function AsciiConverter() {
       ctx.strokeText(textOverlay, x, y)
       ctx.fillText(textOverlay, x, y)
     }
+
+    // Add watermark
+    if (watermark) {
+      ctx.font = `${fontSize}px monospace`
+      ctx.globalAlpha = watermarkOpacity
+      ctx.fillStyle = theme.secondary
+      ctx.strokeStyle = asciiBackground
+      ctx.lineWidth = 1
+      const x = (canvas.width * watermarkPosition.x) / 100
+      const y = (canvas.height * watermarkPosition.y) / 100
+      ctx.strokeText(watermark, x, y)
+      ctx.fillText(watermark, x, y)
+      ctx.globalAlpha = 1
+    }
   }
 
   useEffect(() => {
     if (imageLoaded && !loading && !error) {
       renderToCanvas()
     }
-  }, [asciiArt, coloredAsciiArt, grayscale, loading, error, imageLoaded, currentTheme, textOverlay, overlayPosition])
+  }, [
+    asciiArt,
+    coloredAsciiArt,
+    grayscale,
+    loading,
+    error,
+    imageLoaded,
+    currentTheme,
+    textOverlay,
+    overlayPosition,
+    watermark,
+    watermarkPosition,
+    watermarkOpacity,
+  ])
 
   const convertToAscii = () => {
     try {
@@ -778,8 +824,8 @@ export default function AsciiConverter() {
             const color = adjustColorBrightness(r, g, b, brightnessFactor)
             coloredRow.push({ char, color })
           } else {
-            // Always use white for grayscale mode
-            coloredRow.push({ char, color: "#ffffff" })
+            // Use theme primary color for grayscale mode
+            coloredRow.push({ char, color: themes[currentTheme].primary })
           }
         }
 
@@ -855,6 +901,9 @@ export default function AsciiConverter() {
     setDithering(false)
     setTextOverlay("")
     setOverlayPosition({ x: 50, y: 50 })
+    setWatermark("")
+    setWatermarkPosition({ x: 90, y: 95 })
+    setWatermarkOpacity(0.5)
     setZoom(1)
     setPanX(0)
     setPanY(0)
@@ -886,7 +935,7 @@ export default function AsciiConverter() {
   const exportAsHTML = () => {
     if (!coloredAsciiArt.length) return
 
-    const theme = { background: "#000000", primary: "#ffffff" }
+    const theme = themes[currentTheme]
     let html = `<!DOCTYPE html>
 <html>
 <head>
@@ -931,7 +980,7 @@ export default function AsciiConverter() {
   const exportAsSVG = () => {
     if (!coloredAsciiArt.length) return
 
-    const theme = { background: "#000000", primary: "#ffffff" }
+    const theme = themes[currentTheme]
     const fontSize = 8
     const charWidth = fontSize * 0.6
     const lineHeight = fontSize
@@ -1096,7 +1145,6 @@ export default function AsciiConverter() {
             )}
           </div>
 
-          {/* Portfolio Popup */}
           {showPortfolioPopup && (
               <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-500">
                 <div
@@ -1225,9 +1273,12 @@ export default function AsciiConverter() {
           >
             <div className="space-y-4 p-2 md:p-4 border rounded-md" style={{ borderColor: themes[currentTheme].accent }}>
               <div className="space-y-1">
-                <h1 className="text-lg font-bold flex items-center gap-2" style={{ color: themes[currentTheme].primary }}>
-                  <Sparkles className="h-5 w-5" />
-                  ASCII Art Converter
+                <h1
+                    className="text-2xl font-bold flex items-center justify-center gap-2"
+                    style={{ color: themes[currentTheme].primary }}
+                >
+                  <Sparkles className="h-6 w-6" />
+                  ASCII
                 </h1>
                 {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
               </div>
@@ -1347,6 +1398,50 @@ export default function AsciiConverter() {
                             max={100}
                             value={[overlayPosition.y]}
                             onValueChange={(value) => setOverlayPosition((prev) => ({ ...prev, y: value[0] }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Watermark */}
+                  <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
+                    <Label className="flex items-center gap-2">
+                      <Type className="h-4 w-4" />
+                      Watermark
+                    </Label>
+                    <Input
+                        value={watermark}
+                        onChange={(e) => setWatermark(e.target.value)}
+                        placeholder="Enter watermark text..."
+                        className="bg-stone-800 border-stone-700"
+                    />
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <Label className="text-xs">X Position (%)</Label>
+                        <Slider
+                            min={0}
+                            max={100}
+                            value={[watermarkPosition.x]}
+                            onValueChange={(value) => setWatermarkPosition((prev) => ({ ...prev, x: value[0] }))}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Y Position (%)</Label>
+                        <Slider
+                            min={0}
+                            max={100}
+                            value={[watermarkPosition.y]}
+                            onValueChange={(value) => setWatermarkPosition((prev) => ({ ...prev, y: value[0] }))}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Opacity</Label>
+                        <Slider
+                            min={0.1}
+                            max={1}
+                            step={0.1}
+                            value={[watermarkOpacity]}
+                            onValueChange={(value) => setWatermarkOpacity(value[0])}
                         />
                       </div>
                     </div>
@@ -1590,6 +1685,7 @@ export default function AsciiConverter() {
                 </TabsContent>
               </Tabs>
 
+              {/* Upload Button */}
               <div className="border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                 <Button onClick={() => fileInputRef.current?.click()} className="w-full bg-stone-700 hover:bg-stone-600">
                   <Upload className="h-4 w-4 mr-2" />
@@ -1604,6 +1700,7 @@ export default function AsciiConverter() {
                 />
               </div>
 
+              {/* Hidden canvases */}
               <div className="hidden">
                 <canvas ref={canvasRef} width="300" height="300"></canvas>
                 <canvas ref={filteredCanvasRef} width="300" height="300"></canvas>
