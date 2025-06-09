@@ -1150,7 +1150,7 @@ export default function AsciiConverter() {
                   </div>
 
                   <p className="text-xs mb-3 leading-relaxed" style={{ color: themes[currentTheme].secondary }}>
-                    how are u????
+                    it's awesome
                   </p>
 
                   <Button
