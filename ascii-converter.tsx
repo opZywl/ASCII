@@ -155,6 +155,7 @@ const defaultPresets: Preset[] = [
 ]
 
 export default function AsciiConverter() {
+  // Theme and UI state
   const [currentTheme, setCurrentTheme] = useState("default")
   const [zoom, setZoom] = useState(1)
   const [panX, setPanX] = useState(0)
@@ -164,6 +165,7 @@ export default function AsciiConverter() {
   const [overlayPosition, setOverlayPosition] = useState({ x: 50, y: 50 })
   const [showPortfolioPopup, setShowPortfolioPopup] = useState(false)
 
+  // Core state
   const [resolution, setResolution] = useState(0.11)
   const [inverted, setInverted] = useState(false)
   const [grayscale, setGrayscale] = useState(false)
@@ -180,6 +182,7 @@ export default function AsciiConverter() {
   const [isHydrated, setIsHydrated] = useState(false)
   const [sidebarNarrow, setSidebarNarrow] = useState(false)
 
+  // Advanced features state
   const [imageFilters, setImageFilters] = useState<ImageFilter>({
     contrast: 1,
     brightness: 1,
@@ -192,6 +195,7 @@ export default function AsciiConverter() {
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [customPresetName, setCustomPresetName] = useState("")
 
+  // Refs
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
@@ -208,6 +212,7 @@ export default function AsciiConverter() {
     custom: " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$",
   }
 
+  // Show portfolio popup after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPortfolioPopup(true)
@@ -216,6 +221,7 @@ export default function AsciiConverter() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Apply theme
   useEffect(() => {
     const theme = themes[currentTheme]
     if (typeof document !== "undefined") {
@@ -235,6 +241,7 @@ export default function AsciiConverter() {
     }
   }, [currentTheme])
 
+  // Set hydration state
   useEffect(() => {
     setIsHydrated(true)
   }, [])
@@ -260,6 +267,7 @@ export default function AsciiConverter() {
     }
   }, [isDesktop, isHydrated])
 
+  // Check if sidebar is narrow
   useEffect(() => {
     if (!isHydrated || !isDesktop) return
 
@@ -279,9 +287,11 @@ export default function AsciiConverter() {
     }
   }, [leftPanelWidth, isHydrated, isDesktop])
 
+  // Real-time preview
   useEffect(() => {
     if (imageLoaded && imageRef.current && imageRef.current.complete) {
-      convertToAscii()
+      // Force immediate conversion without any delays
+      setTimeout(() => convertToAscii(), 0)
     }
   }, [
     resolution,
@@ -297,12 +307,7 @@ export default function AsciiConverter() {
     dithering,
   ])
 
-  useEffect(() => {
-    if (imageLoaded && imageRef.current && imageRef.current.complete) {
-      convertToAscii()
-    }
-  }, [imageFilters, edgeDetection, dithering])
-
+  // Dragging logic
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging && containerRef.current) {
@@ -688,16 +693,14 @@ export default function AsciiConverter() {
 
   const convertToAscii = () => {
     try {
-      if (!canvasRef.current || !imageRef.current) {
-        console.log("Canvas or image not available yet")
-        return // Return silently instead of throwing error
+      if (!canvasRef.current || !imageRef.current || !imageLoaded) {
+        return
       }
 
       const img = imageRef.current
 
-      // Check if image is actually loaded
+      // Ensure image is loaded
       if (!img.complete || img.naturalWidth === 0 || img.naturalHeight === 0) {
-        console.log("Image not fully loaded yet")
         return
       }
 
@@ -1196,6 +1199,7 @@ export default function AsciiConverter() {
               </div>
           )}
 
+          {/* Control Panel */}
           <div
               className={`order-2 md:order-1 w-full md:h-auto p-2 md:p-4 font-mono transition-all duration-300 ${
                   !isHydrated ? "opacity-0" : "opacity-100"
@@ -1237,6 +1241,7 @@ export default function AsciiConverter() {
                 </TabsList>
 
                 <TabsContent value="basic" className="space-y-4">
+                  {/* Theme Selector */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label className="flex items-center gap-2">
                       <Palette className="h-4 w-4" />
@@ -1259,6 +1264,7 @@ export default function AsciiConverter() {
                     </Select>
                   </div>
 
+                  {/* Resolution */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label htmlFor="resolution">Resolution: {resolution.toFixed(2)}</Label>
                     <Slider
@@ -1272,6 +1278,7 @@ export default function AsciiConverter() {
                     />
                   </div>
 
+                  {/* Character Set */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label htmlFor="charset">Character Set</Label>
                     <Select value={charSet} onValueChange={setCharSet}>
@@ -1288,6 +1295,7 @@ export default function AsciiConverter() {
                     </Select>
                   </div>
 
+                  {/* Switches */}
                   <div className="space-y-3 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="invert">Invert Colors</Label>
@@ -1344,6 +1352,7 @@ export default function AsciiConverter() {
                     </div>
                   </div>
 
+                  {/* Reset Button */}
                   <div className="border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Button
                         onClick={resetAllSettings}
@@ -1355,6 +1364,7 @@ export default function AsciiConverter() {
                     </Button>
                   </div>
 
+                  {/* Hidden canvases */}
                   <div className="hidden">
                     <canvas ref={canvasRef} width="300" height="300"></canvas>
                     <canvas ref={filteredCanvasRef} width="300" height="300"></canvas>
@@ -1561,6 +1571,7 @@ export default function AsciiConverter() {
                             navigator.clipboard
                                 .writeText(asciiArt)
                                 .then(() => {
+                                  // Show success feedback
                                   const originalError = error
                                   setError("✓ Copied to clipboard!")
                                   setTimeout(() => setError(originalError), 2000)
