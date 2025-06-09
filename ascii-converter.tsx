@@ -169,6 +169,27 @@ const defaultPresets: Preset[] = [
 ]
 
 export default function AsciiConverter() {
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const style = document.createElement("style")
+      style.textContent = `
+      * {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      *::-webkit-scrollbar {
+        display: none;
+      }
+    `
+      document.head.appendChild(style)
+
+      return () => {
+        document.head.removeChild(style)
+      }
+    }
+  }, [])
+
   const [currentTheme, setCurrentTheme] = useState("default")
   const [zoom, setZoom] = useState(1)
   const [panX, setPanX] = useState(0)
@@ -1209,7 +1230,7 @@ export default function AsciiConverter() {
           )}
 
           <div
-              className={`order-2 md:order-1 w-full md:h-auto p-2 md:p-4 font-mono transition-all duration-300 ${
+              className={`order-2 md:order-1 w-full md:h-auto p-2 md:p-4 font-mono transition-all duration-300 hide-scrollbar ${
                   !isHydrated ? "opacity-0" : "opacity-100"
               }`}
               style={{
