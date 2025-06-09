@@ -32,7 +32,6 @@ import {
   X,
 } from "lucide-react"
 
-// Define types
 type ColoredChar = {
   char: string
   color: string
@@ -170,7 +169,6 @@ const defaultPresets: Preset[] = [
 ]
 
 export default function AsciiConverter() {
-  // Theme and UI state
   const [currentTheme, setCurrentTheme] = useState("default")
   const [zoom, setZoom] = useState(1)
   const [panX, setPanX] = useState(0)
@@ -183,7 +181,6 @@ export default function AsciiConverter() {
   const [watermarkPosition, setWatermarkPosition] = useState({ x: 90, y: 95 })
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.5)
 
-  // Core state
   const [resolution, setResolution] = useState(0.11)
   const [inverted, setInverted] = useState(false)
   const [grayscale, setGrayscale] = useState(false)
@@ -200,7 +197,6 @@ export default function AsciiConverter() {
   const [isHydrated, setIsHydrated] = useState(false)
   const [sidebarNarrow, setSidebarNarrow] = useState(false)
 
-  // Advanced features state
   const [imageFilters, setImageFilters] = useState<ImageFilter>({
     contrast: 1,
     brightness: 1,
@@ -213,7 +209,6 @@ export default function AsciiConverter() {
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [customPresetName, setCustomPresetName] = useState("")
 
-  // Refs
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
@@ -238,7 +233,6 @@ export default function AsciiConverter() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Apply theme
   useEffect(() => {
     const theme = themes[currentTheme]
     if (typeof document !== "undefined") {
@@ -258,7 +252,6 @@ export default function AsciiConverter() {
     }
   }, [currentTheme])
 
-  // Set hydration state
   useEffect(() => {
     setIsHydrated(true)
   }, [])
@@ -284,7 +277,6 @@ export default function AsciiConverter() {
     }
   }, [isDesktop, isHydrated])
 
-  // Check if sidebar is narrow
   useEffect(() => {
     if (!isHydrated || !isDesktop) return
 
@@ -304,10 +296,8 @@ export default function AsciiConverter() {
     }
   }, [leftPanelWidth, isHydrated, isDesktop])
 
-  // Real-time preview
   useEffect(() => {
     if (imageLoaded && imageRef.current && imageRef.current.complete) {
-      // Force immediate conversion without any delays
       setTimeout(() => convertToAscii(), 0)
     }
   }, [
@@ -324,7 +314,6 @@ export default function AsciiConverter() {
     dithering,
   ])
 
-  // Dragging logic
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging && containerRef.current) {
@@ -374,7 +363,6 @@ export default function AsciiConverter() {
       setImageLoaded(true)
       setLoading(false)
 
-      // Trigger conversion after a small delay to ensure everything is ready
       setTimeout(() => {
         convertToAscii()
       }, 50)
@@ -385,7 +373,7 @@ export default function AsciiConverter() {
       setLoading(false)
     }
 
-    img.src = "/images/original-image.png"
+    img.src = "/images/ascii.png"
   }
 
   const loadImage = (src: string) => {
@@ -407,7 +395,6 @@ export default function AsciiConverter() {
       setImageLoaded(true)
       setLoading(false)
 
-      // Trigger conversion after a small delay to ensure everything is ready
       setTimeout(() => {
         convertToAscii()
       }, 50)
@@ -463,30 +450,24 @@ export default function AsciiConverter() {
     }
   }
 
-  // Image filtering functions
   const applyImageFilters = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
-    // Get original image data
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     let data = imageData.data
 
-    // Apply brightness and contrast
     if (imageFilters.brightness !== 1 || imageFilters.contrast !== 1) {
       for (let i = 0; i < data.length; i += 4) {
         let r = data[i]
         let g = data[i + 1]
         let b = data[i + 2]
 
-        // Apply brightness
         r *= imageFilters.brightness
         g *= imageFilters.brightness
         b *= imageFilters.brightness
 
-        // Apply contrast
         r = (r - 128) * imageFilters.contrast + 128
         g = (g - 128) * imageFilters.contrast + 128
         b = (b - 128) * imageFilters.contrast + 128
 
-        // Clamp values
         data[i] = Math.max(0, Math.min(255, r))
         data[i + 1] = Math.max(0, Math.min(255, g))
         data[i + 2] = Math.max(0, Math.min(255, b))
@@ -494,7 +475,6 @@ export default function AsciiConverter() {
       ctx.putImageData(imageData, 0, 0)
     }
 
-    // Apply sharpen
     if (imageFilters.sharpen > 0) {
       imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
       data = imageData.data
@@ -525,7 +505,6 @@ export default function AsciiConverter() {
       ctx.putImageData(new ImageData(newData, canvas.width, canvas.height), 0, 0)
     }
 
-    // Apply blur
     if (imageFilters.blur > 0) {
       const tempCanvas = document.createElement("canvas")
       tempCanvas.width = canvas.width
@@ -541,7 +520,6 @@ export default function AsciiConverter() {
       }
     }
 
-    // Apply edge detection
     if (edgeDetection) {
       imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
       const edgeData = applyEdgeDetection(imageData)
@@ -589,7 +567,6 @@ export default function AsciiConverter() {
       }
     }
 
-    // Fill edges with black
     for (let x = 0; x < width; x++) {
       for (const y of [0, height - 1]) {
         const idx = (y * width + x) * 4
@@ -611,7 +588,6 @@ export default function AsciiConverter() {
   const applyDithering = (brightness: number, x: number, y: number): number => {
     if (!dithering) return brightness
 
-    // Bayer matrix 4x4
     const bayer = [
       [0, 8, 2, 10],
       [12, 4, 14, 6],
@@ -668,7 +644,6 @@ export default function AsciiConverter() {
     ctx.font = `${fontSize}px monospace`
     ctx.textBaseline = "top"
 
-    // Use theme for ASCII background and text
     const theme = themes[currentTheme]
     const asciiBackground = theme.background
     const asciiPrimary = theme.primary
@@ -690,7 +665,6 @@ export default function AsciiConverter() {
       })
     }
 
-    // Add text overlay
     if (textOverlay) {
       ctx.font = `${fontSize * 2}px monospace`
       const overlayColor = theme.secondary
@@ -703,7 +677,6 @@ export default function AsciiConverter() {
       ctx.fillText(textOverlay, x, y)
     }
 
-    // Add watermark
     if (watermark) {
       ctx.font = `${fontSize}px monospace`
       ctx.globalAlpha = watermarkOpacity
@@ -745,7 +718,6 @@ export default function AsciiConverter() {
 
       const img = imageRef.current
 
-      // Ensure image is loaded
       if (!img.complete || img.naturalWidth === 0 || img.naturalHeight === 0) {
         return
       }
@@ -760,15 +732,12 @@ export default function AsciiConverter() {
         throw new Error("Could not get canvas context")
       }
 
-      // Set canvas size to match image
       canvas.width = img.width
       canvas.height = img.height
 
-      // Clear and draw the original image
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.drawImage(img, 0, 0, img.width, img.height)
 
-      // Apply all image filters
       applyImageFilters(canvas, ctx)
 
       let imageData
@@ -809,7 +778,6 @@ export default function AsciiConverter() {
             )
           }
 
-          // Apply dithering
           brightness = applyDithering(brightness, x, y)
 
           if (inverted) brightness = 1 - brightness
@@ -824,7 +792,6 @@ export default function AsciiConverter() {
             const color = adjustColorBrightness(r, g, b, brightnessFactor)
             coloredRow.push({ char, color })
           } else {
-            // Use theme primary color for grayscale mode
             coloredRow.push({ char, color: themes[currentTheme].primary })
           }
         }
@@ -844,7 +811,6 @@ export default function AsciiConverter() {
     }
   }
 
-  // Preset functions
   const applyPreset = (preset: Preset) => {
     setResolution(preset.resolution)
     setCharSet(preset.charSet)
@@ -881,7 +847,7 @@ export default function AsciiConverter() {
   }
 
   const deletePreset = (index: number) => {
-    if (index < defaultPresets.length) return // Don't delete default presets
+    if (index < defaultPresets.length) return
     setPresets(presets.filter((_, i) => i !== index))
   }
 
@@ -916,7 +882,6 @@ export default function AsciiConverter() {
     setCustomPresetName("")
   }
 
-  // Export functions
   const downloadAsciiArt = () => {
     if (!asciiArt) {
       setError("No ASCII art to download")
@@ -1022,7 +987,6 @@ export default function AsciiConverter() {
     })
   }
 
-  // Zoom and pan functions
   const handleZoomIn = () => setZoom((prev) => Math.min(prev * 1.2, 5))
   const handleZoomOut = () => setZoom((prev) => Math.max(prev / 1.2, 0.1))
 
@@ -1074,7 +1038,6 @@ export default function AsciiConverter() {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-          {/* ASCII Art Preview */}
           <div
               ref={previewRef}
               className={`order-1 md:order-2 flex-1 overflow-hidden flex items-center justify-center ${
@@ -1090,7 +1053,6 @@ export default function AsciiConverter() {
                     : {}),
               }}
           >
-            {/* Zoom Controls */}
             <div className="absolute top-4 right-4 z-20 flex gap-2">
               <Button onClick={handleZoomIn} size="sm" className="bg-stone-800/80 hover:bg-stone-700/80 backdrop-blur-sm">
                 <ZoomIn className="h-4 w-4" />
@@ -1186,7 +1148,7 @@ export default function AsciiConverter() {
                   </div>
 
                   <p className="text-xs mb-3 leading-relaxed" style={{ color: themes[currentTheme].secondary }}>
-                    Desenvolvedor especializado em React, Next.js e TypeScript. Confira meu portfólio!
+                    Check my portfolio!
                   </p>
 
                   <Button
@@ -1203,14 +1165,12 @@ export default function AsciiConverter() {
                   </Button>
                 </div>
 
-                {/* Always visible indicator dot */}
                 <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-400 rounded-full">
                   <div className="absolute inset-0 bg-green-400 rounded-full animate-ping opacity-75"></div>
                 </div>
               </div>
           )}
 
-          {/* Always visible portfolio indicator when popup is closed */}
           {!showPortfolioPopup && (
               <div className="fixed bottom-6 right-6 z-50 cursor-pointer" onClick={() => setShowPortfolioPopup(true)}>
                 <div
@@ -1229,7 +1189,6 @@ export default function AsciiConverter() {
               </div>
           )}
 
-          {/* Resizable divider */}
           {isHydrated && isDesktop && (
               <div
                   className="order-3 w-2 hover:bg-stone-600 cursor-col-resize items-center justify-center z-10 transition-all duration-300"
@@ -1247,7 +1206,6 @@ export default function AsciiConverter() {
               </div>
           )}
 
-          {/* Control Panel */}
           <div
               className={`order-2 md:order-1 w-full md:h-auto p-2 md:p-4 font-mono transition-all duration-300 ${
                   !isHydrated ? "opacity-0" : "opacity-100"
@@ -1292,7 +1250,6 @@ export default function AsciiConverter() {
                 </TabsList>
 
                 <TabsContent value="basic" className="space-y-4">
-                  {/* Theme Selector */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label className="flex items-center gap-2">
                       <Palette className="h-4 w-4" />
@@ -1315,7 +1272,6 @@ export default function AsciiConverter() {
                     </Select>
                   </div>
 
-                  {/* Resolution */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label htmlFor="resolution">Resolution: {resolution.toFixed(2)}</Label>
                     <Slider
@@ -1329,7 +1285,6 @@ export default function AsciiConverter() {
                     />
                   </div>
 
-                  {/* Character Set */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label htmlFor="charset">Character Set</Label>
                     <Select value={charSet} onValueChange={setCharSet}>
@@ -1346,7 +1301,6 @@ export default function AsciiConverter() {
                     </Select>
                   </div>
 
-                  {/* Switches */}
                   <div className="space-y-3 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="invert">Invert Colors</Label>
@@ -1369,7 +1323,6 @@ export default function AsciiConverter() {
                     </div>
                   </div>
 
-                  {/* Text Overlay */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label className="flex items-center gap-2">
                       <Type className="h-4 w-4" />
@@ -1403,7 +1356,6 @@ export default function AsciiConverter() {
                     </div>
                   </div>
 
-                  {/* Watermark */}
                   <div className="space-y-2 border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Label className="flex items-center gap-2">
                       <Type className="h-4 w-4" />
@@ -1447,7 +1399,6 @@ export default function AsciiConverter() {
                     </div>
                   </div>
 
-                  {/* Reset Button */}
                   <div className="border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                     <Button
                         onClick={resetAllSettings}
@@ -1459,7 +1410,6 @@ export default function AsciiConverter() {
                     </Button>
                   </div>
 
-                  {/* Hidden canvases */}
                   <div className="hidden">
                     <canvas ref={canvasRef} width="300" height="300"></canvas>
                     <canvas ref={filteredCanvasRef} width="300" height="300"></canvas>
@@ -1666,7 +1616,6 @@ export default function AsciiConverter() {
                             navigator.clipboard
                                 .writeText(asciiArt)
                                 .then(() => {
-                                  // Show success feedback
                                   const originalError = error
                                   setError("✓ Copied to clipboard!")
                                   setTimeout(() => setError(originalError), 2000)
@@ -1685,7 +1634,6 @@ export default function AsciiConverter() {
                 </TabsContent>
               </Tabs>
 
-              {/* Upload Button */}
               <div className="border-t pt-4" style={{ borderColor: themes[currentTheme].accent }}>
                 <Button onClick={() => fileInputRef.current?.click()} className="w-full bg-stone-700 hover:bg-stone-600">
                   <Upload className="h-4 w-4 mr-2" />
@@ -1700,7 +1648,6 @@ export default function AsciiConverter() {
                 />
               </div>
 
-              {/* Hidden canvases */}
               <div className="hidden">
                 <canvas ref={canvasRef} width="300" height="300"></canvas>
                 <canvas ref={filteredCanvasRef} width="300" height="300"></canvas>
