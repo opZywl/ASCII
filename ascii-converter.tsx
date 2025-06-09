@@ -178,9 +178,7 @@ export default function AsciiConverter() {
       setLoading(false)
     }
 
-    // Set the source after setting up event handlers
-    img.src =
-      "xxxx"
+    img.src = "/images/ascii.png"
   }
 
   const loadImage = (src: string) => {
@@ -396,7 +394,7 @@ export default function AsciiConverter() {
           } else {
             // Color-aware brightness (perceived luminance)
             brightness = Math.sqrt(
-              0.299 * (r / 255) * (r / 255) + 0.587 * (g / 255) * (g / 255) + 0.114 * (b / 255) * (b / 255),
+                0.299 * (r / 255) * (r / 255) + 0.587 * (g / 255) * (g / 255) + 0.114 * (b / 255) * (b / 255),
             )
           }
 
@@ -453,229 +451,217 @@ export default function AsciiConverter() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-black text-white">
-      <div
-        ref={containerRef}
-        className="flex flex-col md:flex-row min-h-screen w-full overflow-hidden select-none"
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        {/* ASCII Art Preview - Top on mobile, Right on desktop */}
+      <div className="min-h-screen w-full bg-black text-white">
         <div
-          ref={previewRef}
-          className={`order-1 md:order-2 flex-1 bg-black overflow-auto flex items-center justify-center ${
-            isDraggingFile ? "bg-opacity-50" : ""
-          } relative`}
-          style={{
-            ...(isHydrated && isDesktop
-              ? {
-                  width: `${100 - leftPanelWidth}%`,
-                  marginLeft: `${leftPanelWidth}%`,
-                }
-              : {}),
-          }}
+            ref={containerRef}
+            className="flex flex-col md:flex-row min-h-screen w-full overflow-hidden select-none"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
         >
-          {isDraggingFile && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-10 select-none">
-              <div className="text-white text-xl font-mono">Drop image here</div>
-            </div>
-          )}
-          {loading ? (
-            <div className="text-white font-mono select-none">Loading image...</div>
-          ) : error ? (
-            <div className="text-red-400 font-mono p-4 text-center select-none">
-              {error}
-              <div className="mt-2 text-white text-sm">Try uploading a different image or refreshing the page.</div>
-            </div>
-          ) : (
-            <canvas
-              ref={outputCanvasRef}
-              className="max-w-full select-text"
-              style={{
-                fontSize: "0.4rem",
-                lineHeight: "0.4rem",
-                fontFamily: "monospace",
-              }}
-            />
-          )}
-
-          <div className="fixed bottom-4 right-4 z-30 pointer-events-auto">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 rounded block"
-            >
-              <img
-              />
-            </a>
-          </div>
-        </div>
-
-        {/* Resizable divider - Only visible on desktop after hydration */}
-        {isHydrated && isDesktop && (
+          {/* ASCII Art Preview - Top on mobile, Right on desktop */}
           <div
-            className="order-3 w-2 bg-stone-800 hover:bg-stone-700 cursor-col-resize items-center justify-center z-10 transition-opacity duration-300"
-            onMouseDown={startDragging}
-            style={{
-              position: "absolute",
-              left: `${leftPanelWidth}%`,
-              top: 0,
-              bottom: 0,
-              display: "flex",
-            }}
+              ref={previewRef}
+              className={`order-1 md:order-2 flex-1 bg-black overflow-auto flex items-center justify-center ${
+                  isDraggingFile ? "bg-opacity-50" : ""
+              } relative`}
+              style={{
+                ...(isHydrated && isDesktop
+                    ? {
+                      width: `${100 - leftPanelWidth}%`,
+                      marginLeft: `${leftPanelWidth}%`,
+                    }
+                    : {}),
+              }}
           >
-            <GripVertical className="h-6 w-6 text-stone-500" />
+            {isDraggingFile && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-10 select-none">
+                  <div className="text-white text-xl font-mono">Drop image here</div>
+                </div>
+            )}
+            {loading ? (
+                <div className="text-white font-mono select-none">Loading image...</div>
+            ) : error ? (
+                <div className="text-red-400 font-mono p-4 text-center select-none">
+                  {error}
+                  <div className="mt-2 text-white text-sm">Try uploading a different image or refreshing the page.</div>
+                </div>
+            ) : (
+                <canvas
+                    ref={outputCanvasRef}
+                    className="max-w-full select-text"
+                    style={{
+                      fontSize: "0.4rem",
+                      lineHeight: "0.4rem",
+                      fontFamily: "monospace",
+                    }}
+                />
+            )}
           </div>
-        )}
+          {/* Resizable divider - Only visible on desktop after hydration */}
+          {isHydrated && isDesktop && (
+              <div
+                  className="order-3 w-2 bg-stone-800 hover:bg-stone-700 cursor-col-resize items-center justify-center z-10 transition-opacity duration-300"
+                  onMouseDown={startDragging}
+                  style={{
+                    position: "absolute",
+                    left: `${leftPanelWidth}%`,
+                    top: 0,
+                    bottom: 0,
+                    display: "flex",
+                  }}
+              >
+                <GripVertical className="h-6 w-6 text-stone-500" />
+              </div>
+          )}
 
-        {/* Control Panel - Bottom on mobile, Left on desktop */}
-        <div
-          className={`order-2 md:order-1 w-full md:h-auto p-2 md:p-4 bg-stone-900 font-mono text-stone-300 transition-opacity duration-300 ${
-            !isHydrated ? "opacity-0" : "opacity-100"
-          }`}
-          style={{
-            width: "100%",
-            height: "auto",
-            flex: "0 0 auto",
-            ...(isHydrated && isDesktop
-              ? {
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: `${leftPanelWidth}%`,
-                  overflowY: "auto",
-                }
-              : {}),
-          }}
-        >
-          <div className="space-y-4 p-2 md:p-4 border border-stone-700 rounded-md">
-            <div className="space-y-1">
-              <h1 className="text-lg text-stone-100 font-bold">ASCII Art Converter</h1>
-              {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
-            </div>
+          {/* Control Panel - Bottom on mobile, Left on desktop */}
+          <div
+              className={`order-2 md:order-1 w-full md:h-auto p-2 md:p-4 bg-stone-900 font-mono text-stone-300 transition-opacity duration-300 ${
+                  !isHydrated ? "opacity-0" : "opacity-100"
+              }`}
+              style={{
+                width: "100%",
+                height: "auto",
+                flex: "0 0 auto",
+                ...(isHydrated && isDesktop
+                    ? {
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: `${leftPanelWidth}%`,
+                      overflowY: "auto",
+                    }
+                    : {}),
+              }}
+          >
+            <div className="space-y-4 p-2 md:p-4 border border-stone-700 rounded-md">
+              <div className="space-y-1">
+                <h1 className="text-lg text-stone-100 font-bold">ASCII Art Converter</h1>
+                {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+              </div>
 
-            <div className="space-y-4 pt-2">
-              <div className="space-y-2 border-t border-stone-700 pt-4">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="resolution" className="text-stone-300">
-                    Resolution: {resolution.toFixed(2)}
+              <div className="space-y-4 pt-2">
+                <div className="space-y-2 border-t border-stone-700 pt-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="resolution" className="text-stone-300">
+                      Resolution: {resolution.toFixed(2)}
+                    </Label>
+                  </div>
+                  <Slider
+                      id="resolution"
+                      min={0.05}
+                      max={0.3}
+                      step={0.01}
+                      value={[resolution]}
+                      onValueChange={(value) => setResolution(value[0])}
+                      className="[&>span]:border-none [&_.bg-primary]:bg-stone-800 [&>.bg-background]:bg-stone-500/30"
+                  />
+                </div>
+
+                <div className="space-y-2 border-t border-stone-700 pt-4">
+                  <Label htmlFor="charset" className="text-stone-300">
+                    Character Set
+                  </Label>
+                  <Select value={charSet} onValueChange={setCharSet}>
+                    <SelectTrigger id="charset" className="bg-stone-800 border-stone-700 text-stone-300">
+                      <SelectValue placeholder="Select character set" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-stone-800 border-stone-700 text-stone-300">
+                      <SelectItem value="standard" className="focus:bg-stone-700 focus:text-stone-100">
+                        Standard
+                      </SelectItem>
+                      <SelectItem value="detailed" className="focus:bg-stone-700 focus:text-stone-100">
+                        Detailed
+                      </SelectItem>
+                      <SelectItem value="blocks" className="focus:bg-stone-700 focus:text-stone-100">
+                        Block Characters
+                      </SelectItem>
+                      <SelectItem value="minimal" className="focus:bg-stone-700 focus:text-stone-100">
+                        Minimal
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center space-x-2 border-t border-stone-700 pt-4">
+                  <Switch
+                      id="invert"
+                      checked={inverted}
+                      onCheckedChange={setInverted}
+                      className="data-[state=checked]:bg-stone-600"
+                  />
+                  <Label htmlFor="invert" className="text-stone-300">
+                    Invert Colors
                   </Label>
                 </div>
-                <Slider
-                  id="resolution"
-                  min={0.05}
-                  max={0.3}
-                  step={0.01}
-                  value={[resolution]}
-                  onValueChange={(value) => setResolution(value[0])}
-                  className="[&>span]:border-none [&_.bg-primary]:bg-stone-800 [&>.bg-background]:bg-stone-500/30"
-                />
-              </div>
 
-              <div className="space-y-2 border-t border-stone-700 pt-4">
-                <Label htmlFor="charset" className="text-stone-300">
-                  Character Set
-                </Label>
-                <Select value={charSet} onValueChange={setCharSet}>
-                  <SelectTrigger id="charset" className="bg-stone-800 border-stone-700 text-stone-300">
-                    <SelectValue placeholder="Select character set" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-stone-800 border-stone-700 text-stone-300">
-                    <SelectItem value="standard" className="focus:bg-stone-700 focus:text-stone-100">
-                      Standard
-                    </SelectItem>
-                    <SelectItem value="detailed" className="focus:bg-stone-700 focus:text-stone-100">
-                      Detailed
-                    </SelectItem>
-                    <SelectItem value="blocks" className="focus:bg-stone-700 focus:text-stone-100">
-                      Block Characters
-                    </SelectItem>
-                    <SelectItem value="minimal" className="focus:bg-stone-700 focus:text-stone-100">
-                      Minimal
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div className="flex items-center space-x-2 border-t border-stone-700 pt-4">
+                  <Switch
+                      id="grayscale"
+                      checked={grayscale}
+                      onCheckedChange={setGrayscale}
+                      className="data-[state=checked]:bg-stone-600"
+                  />
+                  <Label htmlFor="grayscale" className="text-stone-300">
+                    Grayscale Mode
+                  </Label>
+                </div>
 
-              <div className="flex items-center space-x-2 border-t border-stone-700 pt-4">
-                <Switch
-                  id="invert"
-                  checked={inverted}
-                  onCheckedChange={setInverted}
-                  className="data-[state=checked]:bg-stone-600"
-                />
-                <Label htmlFor="invert" className="text-stone-300">
-                  Invert Colors
-                </Label>
-              </div>
+                <div className="hidden">
+                  <canvas ref={canvasRef} width="300" height="300"></canvas>
+                  <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      onChange={handleFileInputChange}
+                      className="hidden"
+                  />
+                </div>
 
-              <div className="flex items-center space-x-2 border-t border-stone-700 pt-4">
-                <Switch
-                  id="grayscale"
-                  checked={grayscale}
-                  onCheckedChange={setGrayscale}
-                  className="data-[state=checked]:bg-stone-600"
-                />
-                <Label htmlFor="grayscale" className="text-stone-300">
-                  Grayscale Mode
-                </Label>
-              </div>
+                <div className="flex gap-2 pt-4 border-t border-stone-700">
+                  <Button
+                      onClick={() => {
+                        if (!asciiArt) {
+                          setError("No ASCII art to copy")
+                          return
+                        }
+                        const el = document.createElement("textarea")
+                        el.value = asciiArt
+                        document.body.appendChild(el)
+                        el.select()
+                        document.execCommand("copy")
+                        document.body.removeChild(el)
+                        alert("ASCII art copied to clipboard!")
+                      }}
+                      className="flex-1 bg-stone-700 hover:bg-stone-600 text-stone-200 border-stone-600"
+                      disabled={loading || !imageLoaded}
+                  >
+                    {sidebarNarrow ? "Copy" : "Copy ASCII Art"}
+                  </Button>
 
-              <div className="hidden">
-                <canvas ref={canvasRef} width="300" height="300"></canvas>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept="image/*"
-                  onChange={handleFileInputChange}
-                  className="hidden"
-                />
-              </div>
+                  <Button
+                      onClick={downloadAsciiArt}
+                      className="bg-stone-700 hover:bg-stone-600 text-stone-200 border-stone-600"
+                      title="Download ASCII Art"
+                      disabled={loading || !imageLoaded || !asciiArt}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
 
-              <div className="flex gap-2 pt-4 border-t border-stone-700">
-                <Button
-                  onClick={() => {
-                    if (!asciiArt) {
-                      setError("No ASCII art to copy")
-                      return
-                    }
-                    const el = document.createElement("textarea")
-                    el.value = asciiArt
-                    document.body.appendChild(el)
-                    el.select()
-                    document.execCommand("copy")
-                    document.body.removeChild(el)
-                    alert("ASCII art copied to clipboard!")
-                  }}
-                  className="flex-1 bg-stone-700 hover:bg-stone-600 text-stone-200 border-stone-600"
-                  disabled={loading || !imageLoaded}
-                >
-                  {sidebarNarrow ? "Copy" : "Copy ASCII Art"}
-                </Button>
-
-                <Button
-                  onClick={downloadAsciiArt}
-                  className="bg-stone-700 hover:bg-stone-600 text-stone-200 border-stone-600"
-                  title="Download ASCII Art"
-                  disabled={loading || !imageLoaded || !asciiArt}
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-stone-700 hover:bg-stone-600 text-stone-200 border-stone-600"
-                  title="Upload Image"
-                >
-                  <Upload className="h-4 w-4" />
-                </Button>
+                  <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="bg-stone-700 hover:bg-stone-600 text-stone-200 border-stone-600"
+                      title="Upload Image"
+                  >
+                    <Upload className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   )
 }
