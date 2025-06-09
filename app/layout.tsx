@@ -4,7 +4,6 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: "ASCII",
-  description: "Convert images to ASCII",
   icons: {
     icon: "/favicon.png",
   },
