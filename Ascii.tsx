@@ -168,7 +168,7 @@ const defaultPresets: Preset[] = [
   },
 ]
 
-export default function AsciiConverter() {
+export default function Ascii() {
 
   useEffect(() => {
     if (typeof document !== "undefined") {

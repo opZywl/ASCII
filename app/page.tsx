@@ -1,5 +1,5 @@
-import AsciiConverter from "../ascii-converter"
+import Ascii from "../Ascii"
 
 export default function Page() {
-  return <AsciiConverter />
+  return <Ascii />
 }
