@@ -197,7 +197,7 @@ export default function AsciiConverter() {
   const [isPanning, setIsPanning] = useState(false)
   const [textOverlay, setTextOverlay] = useState("")
   const [overlayPosition, setOverlayPosition] = useState({ x: 50, y: 50 })
-  const [showPortfolioPopup, setShowPortfolioPopup] = useState(false)
+  const [showPortfolioPopup, setShowPortfolioPopup] = useState(true)
   const [watermark, setWatermark] = useState("")
   const [watermarkPosition, setWatermarkPosition] = useState({ x: 90, y: 95 })
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.5)
@@ -1171,7 +1171,7 @@ export default function AsciiConverter() {
                   </div>
 
                   <p className="text-xs mb-3 leading-relaxed" style={{ color: themes[currentTheme].secondary }}>
-                    it's awesome
+                    it's awesome, see others projects
                   </p>
 
                   <Button
